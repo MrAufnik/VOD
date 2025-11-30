@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kan Content Scraper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .category {
+            margin-bottom: 40px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        
+        .category-title {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .item-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+        
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .item-content {
+            padding: 15px;
+        }
+        
+        .item-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .item-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .item-link {
+            display: inline-block;
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .item-link:hover {
+            text-decoration: underline;
+        }
+        
+        .stats {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .json-output {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Kan Content Scraper</h1>
+        
+        <div class="controls">
+            <button id="fetchBtn" onclick="loadContent()">טען תוכן</button>
+            <button id="showJsonBtn" onclick="toggleJson()" style="display:none;">הצג JSON</button>
+            <button id="copyJsonBtn" onclick="copyJson()" style="display:none;">העתק JSON</button>
+        </div>
+        
+        <div id="loading" class="loading" style="display:none;">
+            מעלה נתונים...
+        </div>
+        
+        <div id="error" class="error" style="display:none;"></div>
+        
+        <div id="stats" class="stats" style="display:none;"></div>
+        
+        <div id="content"></div>
+        
+        <div id="jsonOutput" class="json-output"></div>
+    </div>
+
+    <script>
+        let globalData = null;
+
+        async function fetchKanContent() {
+            const url = 'https://www.kan.org.il/lobby/kan-box/';
+            
+            try {
+                // Try direct fetch first
+                let html;
+                try {
+                    const response = await fetch(url);
+                    html = await response.text();
+                } catch (corsError) {
+                    // Use CORS proxy
+                    const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                    const response = await fetch(proxyUrl + encodeURIComponent(url));
+                    html = await response.text();
+                }
+                
+                // Parse HTML
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                const results = {
+                    success: true,
+                    url: url,
+                    timestamp: new Date().toISOString(),
+                    categories: []
+                };
+                
+                // Find all block-list elements
+                const blocks = doc.querySelectorAll('.block-list');
+                
+                blocks.forEach(block => {
+                    const category = {};
+                    
+                    // Get category title
+                    const titleElement = block.querySelector('.unstyled-link');
+                    category.category = titleElement ? titleElement.textContent.trim() : 'ללא קטגוריה';
+                    category.items = [];
+                    
+                    // Get all cards
+                    const cards = block.querySelectorAll('.card.vods-by-category');
+                    
+                    cards.forEach(card => {
+                        try {
+                            const item = {
+                                category: category.category,
+                                title: '',
+                                image: '',
+                                description: '',
+                                link: ''
+                            };
+                            
+                            // Get link
+                            const linkElement = card.querySelector('.card-link.d-inline-block');
+                            if (linkElement) {
+                                item.link = linkElement.getAttribute('href') || '';
+                                if (item.link && !item.link.startsWith('http')) {
+                                    item.link = 'https://www.kan.org.il' + item.link;
+                                }
+                            }
+                            
+                            // Get image and title
+                            const imgElement = card.querySelector('.block-img .img-full');
+                            if (imgElement) {
+                                item.image = imgElement.getAttribute('src') || '';
+                                item.title = imgElement.getAttribute('title') || imgElement.getAttribute('alt') || '';
+                                
+                                // Remove query string
+                                if (item.image) {
+                                    item.image = item.image.split('?')[0];
+                                    if (!item.image.startsWith('http')) {
+                                        item.image = 'https://www.kan.org.il' + item.image;
+                                    }
+                                }
+                            }
+                            
+                            // Get description
+                            const descElement = card.querySelector('.card-body .details .mb-3');
+                            if (descElement) {
+                                item.description = descElement.textContent.trim();
+                            }
+                            
+                            // Only add if valid
+                            if (item.title || item.link) {
+                                category.items.push(item);
+                            }
+                            
+                        } catch (error) {
+                            console.warn('Error parsing card:', error);
+                        }
+                    });
+                    
+                    category.count = category.items.length;
+                    
+                    if (category.count > 0) {
+                        results.categories.push(category);
+                    }
+                });
+                
+                results.total_categories = results.categories.length;
+                results.total_items = results.categories.reduce((sum, cat) => sum + cat.count, 0);
+                
+                return results;
+                
+            } catch (error) {
+                return {
+                    success: false,
+                    error: error.message
+                };
+            }
+        }
+
+        async function loadContent() {
+            const loadingDiv = document.getElementById('loading');
+            const errorDiv = document.getElementById('error');
+            const contentDiv = document.getElementById('content');
+            const statsDiv = document.getElementById('stats');
+            const fetchBtn = document.getElementById('fetchBtn');
+            const showJsonBtn = document.getElementById('showJsonBtn');
+            const copyJsonBtn = document.getElementById('copyJsonBtn');
+            
+            // Reset
+            loadingDiv.style.display = 'block';
+            errorDiv.style.display = 'none';
+            contentDiv.innerHTML = '';
+            statsDiv.style.display = 'none';
+            fetchBtn.disabled = true;
+            showJsonBtn.style.display = 'none';
+            copyJsonBtn.style.display = 'none';
+            
+            try {
+                const data = await fetchKanContent();
+                globalData = data;
+                
+                if (!data.success) {
+                    throw new Error(data.error);
+                }
+                
+                // Show stats
+                statsDiv.innerHTML = `
+                    <strong>סה"כ קטגוריות:</strong> ${data.total_categories} | 
+                    <strong>סה"כ פריטים:</strong> ${data.total_items}
+                `;
+                statsDiv.style.display = 'block';
+                
+                // Render content
+                data.categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category';
+                    
+                    const titleDiv = document.createElement('div');
+                    titleDiv.className = 'category-title';
+                    titleDiv.textContent = `${category.category} (${category.count})`;
+                    categoryDiv.appendChild(titleDiv);
+                    
+                    const gridDiv = document.createElement('div');
+                    gridDiv.className = 'items-grid';
+                    
+                    category.items.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'item-card';
+                        
+                        card.innerHTML = `
+                            ${item.image ? `<img src="${item.image}" alt="${item.title}" class="item-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">` : ''}
+                            <div class="item-content">
+                                <div class="item-title">${item.title || 'ללא כותרת'}</div>
+                                ${item.description ? `<div class="item-description">${item.description}</div>` : ''}
+                                ${item.link ? `<a href="${item.link}" target="_blank" class="item-link">לצפייה →</a>` : ''}
+                            </div>
+                        `;
+                        
+                        gridDiv.appendChild(card);
+                    });
+                    
+                    categoryDiv.appendChild(gridDiv);
+                    contentDiv.appendChild(categoryDiv);
+                });
+                
+                // Show JSON buttons
+                showJsonBtn.style.display = 'inline-block';
+                copyJsonBtn.style.display = 'inline-block';
+                
+                // Update JSON output
+                document.getElementById('jsonOutput').textContent = JSON.stringify(data, null, 2);
+                
+            } catch (error) {
+                errorDiv.textContent = 'שגיאה: ' + error.message;
+                errorDiv.style.display = 'block';
+            } finally {
+                loadingDiv.style.display = 'none';
+                fetchBtn.disabled = false;
+            }
+        }
+
+        function toggleJson() {
+            const jsonDiv = document.getElementById('jsonOutput');
+            jsonDiv.style.display = jsonDiv.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function copyJson() {
+            const jsonText = document.getElementById('jsonOutput').textContent;
+            navigator.clipboard.writeText(jsonText).then(() => {
+                alert('JSON הועתק ללוח!');
+            });
+        }
+
+        // Auto-load on page load
+        window.addEventListener('load', loadContent);
+    </script>
+</body>
+</html>
