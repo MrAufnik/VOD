@@ -162,7 +162,7 @@ def embedded_json(html: str) -> list[Any]:
 def assignment_json(html: str, variable: str) -> list[Any]:
     """Extract JSON assigned to a JavaScript variable using a balanced JSON decoder."""
     values: list[Any] = []
-    pattern = re.compile(r"(?:" + re.escape(variable) + r")\s*=\s*")
+    pattern = re.compile(r"(?:" + re.escape(variable) + r")\s*[:=]\s*")
     for match in pattern.finditer(html):
         pos = match.end()
         while pos < len(html) and html[pos].isspace():
