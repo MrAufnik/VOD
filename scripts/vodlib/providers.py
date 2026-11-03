@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 from bs4 import BeautifulSoup
 
@@ -178,7 +178,7 @@ def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         if image_node is None and not any(token in path for token in ("/shows/", "/programs/")):
             continue
-        if re.search(r"(פרק\\s*\\d+|episode\\s*\\d+)", title, re.I):
+        if re.search(r"(פרק\s*\d+|episode\s*\d+)", title, re.I):
             continue
         image = ""
         if image_node is not None:
@@ -278,10 +278,21 @@ def find_seasons(channel: str, series: dict[str, Any]) -> list[dict[str, Any]]:
         return seasons or [{"number": 1, "title": "פרקים", "url": page}]
     if provider == "reshet13":
         html = get_text(url, referer="https://13tv.co.il/")
-        # The Android parser discovers season-N/episodes/ paths in window.data_query.
-        pattern = re.compile(re.escape(url.rstrip("/")) + r"/season-(\d+)/episodes/")
-        for match in pattern.finditer(html):
-            season_url = match.group(0)
+        candidates: set[str] = set()
+        # Season URLs may be present in embedded data or ordinary anchors.
+        for match in re.finditer(r"""(?:https?:)?//[^"']+|/[^"']*season-\d+/episodes/""", html):
+            candidate = match.group(0).replace("\\/", "/")
+            if re.search(r"/season-(\d+)/episodes/", candidate):
+                candidates.add(absolute(url, candidate))
+        soup = BeautifulSoup(html, "html.parser")
+        for anchor in soup.select("a[href]"):
+            href = absolute(url, anchor.get("href"))
+            if re.search(r"/season-(\d+)/episodes/?$", href):
+                candidates.add(href)
+        for season_url in sorted(candidates):
+            match = re.search(r"/season-(\d+)/episodes/", season_url)
+            if not match:
+                continue
             number = int(match.group(1))
             if season_url not in seen:
                 seen.add(season_url)
