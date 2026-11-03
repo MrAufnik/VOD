@@ -8,7 +8,7 @@ from urllib.parse import urljoin, urlparse
 from bs4 import BeautifulSoup
 
 from .core import (
-    absolute, add_query, clean_title, embedded_json, first_text, first_value,
+    absolute, add_query, assignment_json, clean_title, embedded_json, first_text, first_value,
     get_json, get_text, page_url_without_query, soup_for, walk_objects,
 )
 
@@ -57,27 +57,21 @@ def parse_kan_kids_series(category: dict[str, Any]) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     seen: set[str] = set()
     # Channel23VodAsyncTask reads digitalSeries from page scripts.
-    for script in soup.select("script"):
-        raw = script.string or script.get_text()
-        match = re.search(r"digitalSeries\s*:\s*(\[.*?\])\s*[,;]", raw, re.S)
-        if not match:
-            match = re.search(r"digitalSeries\s*:\s*(\[.*?\])\s*\}", raw, re.S)
-        if match:
-            try:
-                items = json.loads(match.group(1))
-            except json.JSONDecodeError:
+    for payload in assignment_json(html, "digitalSeries"):
+        items = payload if isinstance(payload, list) else []
+        for item in items:
+            if not isinstance(item, dict):
                 continue
-            for item in items if isinstance(items, list) else []:
-                url = absolute(category["url"], first_value(item, "Url", "url", "pageUrl"))
-                if not url or url in seen:
-                    continue
-                seen.add(url)
-                results.append({
-                    "title": clean_title(first_value(item, "ImageAlt", "Title", "title", "Name")),
-                    "url": url,
-                    "image": absolute(category["url"], first_value(item, "Image", "image", "pic")),
-                    "description": first_value(item, "Description", "description", "altText"),
-                })
+            url = absolute(category["url"], first_value(item, "Url", "url", "pageUrl"))
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            results.append({
+                "title": clean_title(first_value(item, "ImageAlt", "Title", "title", "Name")),
+                "url": url,
+                "image": absolute(category["url"], first_value(item, "Image", "image", "pic")),
+                "description": first_value(item, "Description", "description", "altText"),
+            })
     # Fallback to cards for KAN Kids redesigns.
     if not results:
         for link in soup.select("a.cr-item[href], a.card-link[href]"):
@@ -150,9 +144,9 @@ def parse_mako_series(category: dict[str, Any], *, channel24: bool = False) -> l
             deduped.append(item)
     return deduped
 
-def _reshet_payloads(url: str) -> list[Any]:
-    html = get_text(url, referer="https://13tv.co.il/")
-    return embedded_json(html)
+def _reshet_payloads(url: str, html: str | None = None) -> list[Any]:
+    page = html if html is not None else get_text(url, referer="https://13tv.co.il/")
+    return embedded_json(page)
 
 def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
@@ -189,7 +183,7 @@ def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
             "image": absolute(category["url"], image),
             "description": first_text(anchor, [".description", ".subtitle", "p"])
         })
-    for payload in _reshet_payloads(category["url"]):
+    for payload in _reshet_payloads(category["url"], html):
         for obj in walk_objects(payload):
             posts = obj.get("posts")
             if not isinstance(posts, list):
