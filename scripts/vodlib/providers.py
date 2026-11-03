@@ -157,6 +157,38 @@ def _reshet_payloads(url: str) -> list[Any]:
 def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     seen: set[str] = set()
+    # Current Reshet VOD pages expose visible program cards in the HTML.
+    # Read these first; retain the legacy embedded posts parser below as fallback.
+    html = get_text(category["url"], referer="https://13tv.co.il/")
+    soup = BeautifulSoup(html, "html.parser")
+    for anchor in soup.select("a[href]"):
+        href = absolute(category["url"], anchor.get("href"))
+        if not href or href in seen:
+            continue
+        image_node = anchor.select_one("img")
+        title = first_text(anchor, ["h2", "h3", ".title", ".card-title"])
+        if not title and image_node is not None:
+            title = image_node.get("alt", "").strip()
+        if not title:
+            title = anchor.get_text(" ", strip=True)
+        path = urlparse(href).path.lower()
+        if not title or len(title) > 120:
+            continue
+        if any(token in path for token in ("/article/", "/news/", "/video/")):
+            continue
+        if image_node is None and not any(token in path for token in ("/shows/", "/programs/")):
+            continue
+        if re.search(r"(פרק\\s*\\d+|episode\\s*\\d+)", title, re.I):
+            continue
+        image = ""
+        if image_node is not None:
+            image = image_node.get("src") or image_node.get("data-src") or image_node.get("data-lazy-src") or ""
+        seen.add(href)
+        results.append({
+            "title": clean_title(title), "url": href,
+            "image": absolute(category["url"], image),
+            "description": first_text(anchor, [".description", ".subtitle", "p"])
+        })
     for payload in _reshet_payloads(category["url"]):
         for obj in walk_objects(payload):
             posts = obj.get("posts")
