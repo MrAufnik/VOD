@@ -172,7 +172,7 @@ def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         if image_node is None and not any(token in path for token in ("/shows/", "/programs/")):
             continue
-        if re.search(r"(פרק\s*\d+|episode\s*\d+|\\b\\d{1,2}\\.\\d{1,2}\\.\\d{2,4}\\b)", title, re.I):
+        if re.search(r"(פרק\s*\d+|episode\s*\d+|\b\d{1,2}\.\d{1,2}\.\d{2,4}\b)", title, re.I):
             continue
         heading = anchor.find_previous(["h2", "h3"])
         category_title = heading.get_text(" ", strip=True) if heading else "כל התוכניות"
