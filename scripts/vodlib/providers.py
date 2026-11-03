@@ -177,11 +177,14 @@ def parse_reshet_series(category: dict[str, Any]) -> list[dict[str, Any]]:
         image = ""
         if image_node is not None:
             image = image_node.get("src") or image_node.get("data-src") or image_node.get("data-lazy-src") or ""
+        heading = anchor.find_previous(["h2", "h3"])
+        category_title = heading.get_text(" ", strip=True) if heading else "כל התוכניות"
         seen.add(href)
         results.append({
             "title": clean_title(title), "url": href,
             "image": absolute(category["url"], image),
-            "description": first_text(anchor, [".description", ".subtitle", "p"])
+            "description": first_text(anchor, [".description", ".subtitle", "p"]),
+            "category_title": category_title
         })
     for payload in _reshet_payloads(category["url"], html):
         for obj in walk_objects(payload):
