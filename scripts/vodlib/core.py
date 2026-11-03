@@ -111,41 +111,49 @@ def image_from(node: Any, base: str) -> str:
             return absolute(base, value.split("?")[0])
     return ""
 
+def _decode_json_at(raw: str, start: int) -> tuple[Any, int] | None:
+    """Decode one JSON value from JS without truncating nested objects by regex."""
+    try:
+        return json.JSONDecoder().raw_decode(raw, start)
+    except json.JSONDecodeError:
+        return None
+
 def embedded_json(html: str) -> list[Any]:
     soup = BeautifulSoup(html, "html.parser")
     found: list[Any] = []
+    fingerprints: set[str] = set()
     for script in soup.find_all("script"):
-        raw = script.string or script.get_text()
-        raw = raw.strip()
+        raw = (script.string or script.get_text() or "").strip()
         if not raw:
             continue
-        candidates = [raw]
-        # Reshet 13 embeds page data in either a JSON script or window.data_query.
-        if "window.data_query" in raw:
-            match = re.search(r"window\.data_query\s*=\s*(\{.*?\})\s*;?\s*(?:window|$)", raw, re.S)
-            if match:
-                candidates.insert(0, match.group(1))
-        if "type=\"application/json\"" in raw:
-            candidates.insert(0, raw)
-        for candidate in candidates:
-            start, end = candidate.find("{"), candidate.rfind("}")
-            if start >= 0 and end > start:
-                try:
-                    obj = json.loads(candidate[start:end + 1])
-                    found.append(obj)
-                    break
-                except json.JSONDecodeError:
-                    pass
-            start, end = candidate.find("["), candidate.rfind("]")
-            if start >= 0 and end > start:
-                try:
-                    obj = json.loads(candidate[start:end + 1])
-                    found.append(obj)
-                    break
-                except json.JSONDecodeError:
-                    pass
+        candidates: list[Any] = []
+        script_type = (script.get("type") or "").lower()
+        if "json" in script_type or script.get("id") == "__NEXT_DATA__":
+            try:
+                candidates.append(json.loads(raw))
+            except json.JSONDecodeError:
+                pass
+        # Reshet 13 publishes window.data_query = { ... }; JSONDecoder correctly
+        # handles nested braces, escaped strings and arrays.
+        for match in re.finditer(r"(?:window\.)?data_query\s*=\s*", raw):
+            pos = match.end()
+            while pos < len(raw) and raw[pos].isspace():
+                pos += 1
+            if pos < len(raw) and raw[pos] in "{[":
+                decoded = _decode_json_at(raw, pos)
+                if decoded:
+                    candidates.append(decoded[0])
+        if not candidates and raw[:1] in "{[":
+            try:
+                candidates.append(json.loads(raw))
+            except json.JSONDecodeError:
+                pass
+        for value in candidates:
+            fingerprint = json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
+            if fingerprint not in fingerprints:
+                fingerprints.add(fingerprint)
+                found.append(value)
     return found
-
 def walk_objects(value: Any):
     if isinstance(value, dict):
         yield value
