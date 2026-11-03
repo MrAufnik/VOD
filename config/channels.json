@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "channels": {
+    "11": {
+      "name": "כאן 11",
+      "provider": "kan",
+      "base_url": "https://www.kan.org.il",
+      "categories": [
+        {"id": "all", "title": "כל התוכניות", "url": "https://www.kan.org.il/lobby/kan11/"},
+        {"id": "news", "title": "תוכניות אקטואליה", "url": "https://www.kan.org.il/lobby/newstv/"},
+        {"id": "digital", "title": "דיגיטל", "url": "https://www.kan.org.il/lobby/digital-lobby/"},
+        {"id": "archive", "title": "ארכיון", "url": "https://www.kan.org.il/lobby/series/"},
+        {"id": "box", "title": "BOX", "url": "https://www.kan.org.il/lobby/kan-box/"}
+      ]
+    },
+    "12": {
+      "name": "קשת 12",
+      "provider": "mako",
+      "base_url": "https://www.mako.co.il/",
+      "categories": [
+        {"id": "all", "title": "כל התכניות", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive"},
+        {"id": "reality", "title": "ריאליטי", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=genre&vcmId=4f9dbac980653210VgnVCM2000002a0c10acRCRD"},
+        {"id": "documentary", "title": "דוקומנטרי", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=genre&vcmId=8e8abac980653210VgnVCM2000002a0c10acRCRD"},
+        {"id": "drama", "title": "דרמה", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=genre&vcmId=05fcbac980653210VgnVCM2000002a0c10acRCRD"},
+        {"id": "comedy", "title": "קומדיה", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=genre&vcmId=fe2dbac980653210VgnVCM2000002a0c10acRCRD"},
+        {"id": "cooking", "title": "בישול", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=genre&vcmId=5d738481c9674210VgnVCM2000002a0c10acRCRD"},
+        {"id": "news", "title": "החדשות", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=provider&vcmId=ee06c13070733210VgnVCM2000002a0c10acRCRD"},
+        {"id": "podcasts", "title": "פודקאסטים", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=provider&vcmId=d5aae64655ea0810VgnVCM100000700a10acRCRD"},
+        {"id": "alphabetical", "title": "א-ב", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=ABC_Programs_Slider"}
+      ]
+    },
+    "13": {
+      "name": "רשת 13",
+      "provider": "reshet13",
+      "base_url": "https://13tv.co.il",
+      "categories": [
+        {"id": "all", "title": "כל התכניות", "url": "https://13tv.co.il/vod/"},
+        {"id": "programs", "title": "תוכניות", "url": "https://13tv.co.il/general/programs/"},
+        {"id": "news", "title": "חדשות 13", "url": "https://13tv.co.il/news/13-programs/"},
+        {"id": "archive", "title": "ארכיון 13", "url": "https://13tv.co.il/allshows/screen/1170108/"}
+      ]
+    },
+    "23": {
+      "name": "כאן חינוכית",
+      "provider": "kan_kids",
+      "base_url": "https://www.kankids.org.il",
+      "categories": [
+        {"id": "tiny", "title": "קטנטנים", "url": "https://www.kankids.org.il/lobby-kids/tiny/"},
+        {"id": "kids-teens", "title": "ילדים ונוער", "url": "https://www.kankids.org.il/lobby-kids/kids-teens/"}
+      ]
+    },
+    "24": {
+      "name": "ערוץ 24",
+      "provider": "mako24",
+      "base_url": "https://www.mako.co.il/",
+      "categories": [
+        {"id": "channel-24", "title": "תכניות 24", "url": "https://www.mako.co.il/mako-vod-index?platform=responsive&filter=provider&vcmId=3377c13070733210VgnVCM2000002a0c10acRCRD"}
+      ]
+    }
+  }
+}
