@@ -2,7 +2,7 @@ import argparse
 import subprocess
 import sys
 
-STAGES = ("categories", "series", "seasons", "episodes", "build_json")
+STAGES = ("categories", "series", "seasons", "episodes", "validate", "build_json")
 
 def main():
     parser = argparse.ArgumentParser(description="Run all VOD extraction stages for one channel")
