@@ -33,11 +33,16 @@ def channel_config(channel: str) -> dict[str, Any]:
         raise ValueError(f"Unsupported channel: {channel}")
     return channels[key]
 
+_SESSION: requests.Session | None = None
+
 def session() -> requests.Session:
-    s = requests.Session()
-    s.headers.update(HEADERS)
-    s.headers.update({"Accept": "text/html,application/json,application/xhtml+xml,*/*"})
-    return s
+    # Reuse TCP connections across the many pages in one catalog run.
+    global _SESSION
+    if _SESSION is None:
+        _SESSION = requests.Session()
+        _SESSION.headers.update(HEADERS)
+        _SESSION.headers.update({"Accept": "text/html,application/json,application/xhtml+xml,*/*"})
+    return _SESSION
 
 def get_text(url: str, *, referer: str | None = None, timeout: int = 35) -> str:
     headers = {"Referer": referer} if referer else None
@@ -154,6 +159,21 @@ def embedded_json(html: str) -> list[Any]:
                 fingerprints.add(fingerprint)
                 found.append(value)
     return found
+def assignment_json(html: str, variable: str) -> list[Any]:
+    """Extract JSON assigned to a JavaScript variable using a balanced JSON decoder."""
+    values: list[Any] = []
+    pattern = re.compile(r"(?:" + re.escape(variable) + r")\s*=\s*")
+    for match in pattern.finditer(html):
+        pos = match.end()
+        while pos < len(html) and html[pos].isspace():
+            pos += 1
+        if pos >= len(html) or html[pos] not in "{[":
+            continue
+        decoded = _decode_json_at(html, pos)
+        if decoded:
+            values.append(decoded[0])
+    return values
+
 def walk_objects(value: Any):
     if isinstance(value, dict):
         yield value
