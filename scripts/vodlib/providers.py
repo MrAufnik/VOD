@@ -406,7 +406,7 @@ def parse_reshet_episodes(season: dict[str, Any], series: dict[str, Any]) -> lis
             image = first_value(obj, "image", "thumbnail", "poster", "imageUrl")
             video_obj = obj.get("video") if isinstance(obj.get("video"), dict) else {}
             video_id = (first_value(obj, "kalturaId", "entryId", "videoId", "video_id")
-                        or first_value(video_obj, "kalturaId", "entryId", "videoId", "video_id", "id"))
+                        or first_value(video_obj, "kalturaId", "entryId", "videoId", "video_id"))
             if title and (link or video_id) and any(k in obj for k in ("video", "videoId", "video_id", "episode", "post_type")):
                 full = absolute(season["url"], link) if link else ""
                 key = full or video_id
