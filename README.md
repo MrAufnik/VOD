@@ -8,7 +8,8 @@ Python scraper for channels 11, 12, 13, 23 and 24, based on the existing MediaBo
 2. `series.py` — series/program cards: title, source URL, poster and description
 3. `seasons.py` — discovers season pages for each series
 4. `episodes.py` — episode title, URL, poster and description
-5. `build_json.py` — writes `data/channel_<id>.json`
+5. `validate.py` — checks required fields, parser/request errors and sudden catalog shrinkage
+6. `build_json.py` — writes `data/channel_<id>.json` only after validation succeeds
 
 Shared HTTP/HTML/JSON helpers live in `scripts/vodlib/core.py`; provider-specific parsing lives in `scripts/vodlib/providers.py`.
 
@@ -27,7 +28,7 @@ Intermediate files are written under `work/channel_<id>/`. Final output is `data
 
 ## GitHub Actions
 
-The Actions tab contains five independent workflows (one per channel), each with manual dispatch and a daily schedule. There is also a workflow to run all five channels in parallel. Each individual workflow commits only its own JSON file.
+The Actions tab contains five independent workflows (one per channel), each with manual dispatch and a daily schedule. There is also a workflow to run all five channels sequentially and commit the five outputs together, avoiding concurrent push conflicts. Each individual workflow commits only its own JSON file.
 
 ## JSON format
 
@@ -66,3 +67,15 @@ The Actions tab contains five independent workflows (one per channel), each with
 Playback URLs are not resolved by this catalog job. The Android app obtains those through provider-specific playback/ticket operations; such URLs can be temporary and should not be stored as stable catalog links.
 
 Provider markup and APIs can change. Review the first Action run logs and resulting JSON before treating the generated catalog as complete. Intermediate outputs preserve per-category/per-series errors for diagnosis.
+
+
+## Reliability improvements
+
+- Shared HTTP session reuses connections across page requests.
+- Embedded JSON extraction uses Python's JSON decoder rather than a greedy brace-matching regex.
+- KAN Kids requests the large listing mode already used by the Android implementation.
+- Reshet 13 now starts from the current public VOD routes (`/vod/` and `/allshows/`) and reads visible program cards before trying the legacy embedded `posts` payload.
+- A validation gate blocks publication if extraction returns no series/episodes, parser errors occur, required fields are missing, or the catalog unexpectedly drops below 35% of the previous successful count.
+- Offline parser/validation unit tests run before each workflow scrape.
+
+The current Reshet page structure was checked against its live VOD pages. The remaining provider-specific extraction (especially KAN and Mako API payloads) must still be confirmed by the first real GitHub Actions run; web indexing alone cannot validate every underlying response body.
