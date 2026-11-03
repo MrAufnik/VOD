@@ -92,13 +92,8 @@
       "categories": [
         {
           "id": "all",
-          "title": "כל התוכניות והפרקים",
+          "title": "כל התוכניות",
           "url": "https://www.13tv.co.il/vod/"
-        },
-        {
-          "id": "archive",
-          "title": "ארכיון VOD",
-          "url": "https://www.13tv.co.il/allshows/"
         }
       ]
     },
