@@ -238,7 +238,9 @@ def find_seasons(channel: str, series: dict[str, Any]) -> list[dict[str, Any]]:
     seasons: list[dict[str, Any]] = []
     seen: set[str] = set()
     if provider in ("kan", "kan_kids"):
-        html = get_text(url)
+        # Match the Android KAN Kids parser: request the full episode/season list.
+        page_url = add_query(url, itemsToShow="9999") if provider == "kan_kids" else url
+        html = get_text(page_url)
         soup = BeautifulSoup(html, "html.parser")
         selectors = ["a.program-season-tab[href]"] if provider == "kan" else ["a[href]"]
         for link in soup.select(",".join(selectors)):
@@ -301,7 +303,8 @@ def find_seasons(channel: str, series: dict[str, Any]) -> list[dict[str, Any]]:
     raise ValueError(f"No season parser for provider: {provider}")
 
 def parse_kan_episodes(season: dict[str, Any], series: dict[str, Any], channel: str) -> list[dict[str, Any]]:
-    html = get_text(season["url"])
+    page_url = add_query(season["url"], itemsToShow="9999") if channel == "23" else season["url"]
+    html = get_text(page_url)
     soup = BeautifulSoup(html, "html.parser")
     episodes = []
     seen = set()
