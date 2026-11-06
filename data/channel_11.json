@@ -5,12 +5,12 @@
     "name": "כאן 11",
     "provider": "kan"
   },
-  "generated_at": "2026-11-05T09:51:18Z",
+  "generated_at": "2026-11-06T09:49:23Z",
   "statistics": {
     "categories": 5,
     "series": 305,
     "seasons": 400,
-    "episodes": 4304
+    "episodes": 4297
   },
   "categories": [
     {
@@ -42,6 +42,20 @@
       "title": "BOX",
       "url": "https://www.kan.org.il/lobby/kan-box/",
       "series": [
+        {
+          "title": "מה שתגידו | 05.11.26",
+          "url": "https://www.kan.org.il/content/kan/kan-11/p-11510/עונה-6/1107312/",
+          "image": "https://www.kan.org.il/media/yesjzbuj/אתר.jpg?width=490&height=272&v=1dd6d53a47a3b10",
+          "description": "",
+          "seasons": [
+            {
+              "number": 1,
+              "title": "פרקים",
+              "url": "https://www.kan.org.il/content/kan/kan-11/p-11510/עונה-6/1107312/",
+              "episodes": []
+            }
+          ]
+        },
         {
           "title": "דאבל על הכסף | פרק 8",
           "url": "https://www.kan.org.il/content/kan/kan-11/p-1103859/s1/1103867/",
@@ -749,70 +763,6 @@
               "title": "פרקים",
               "url": "https://www.kan.org.il/content/kan/kan-11/p-962897/s2/1112504/",
               "episodes": []
-            }
-          ]
-        },
-        {
-          "title": "אנשים שפגשתי | פרק 6",
-          "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077542/",
-          "image": "https://www.kan.org.il/media/5uvdyjom/artboard-1-1x_1.jpg?rxy=0.32896456570248656,0.1827988918540171&width=490&height=272&v=1dd64a8036b4d30",
-          "description": "",
-          "seasons": [
-            {
-              "number": 1,
-              "title": "פרקים",
-              "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077542/",
-              "episodes": [
-                {
-                  "title": "פרק 1 - וולקאם לבאר שבע",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1100782/",
-                  "image": "https://www.kan.org.il/media/tojdtydt/אנשים-שפגשתי-פרק-1.jpg?width=490&height=272&v=1dd46d939ffdce0",
-                  "description": "ברוכים הבאים למרכז המסחרי \"סימי סנטר\" שבשכונה א'",
-                  "number": 1
-                },
-                {
-                  "title": "פרק 2 - בת - נשיקה אחת. דודה - שתיים. קווקזים - שלוש",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077536/",
-                  "image": "https://www.kan.org.il/media/zi2pzu41/פיצה.jpg?width=490&height=272&v=1dd4ec9c4afc6f0",
-                  "description": "במרכז המסחרי \"סימי סנטר\" שבבאר שבע נערכים לטקס חתימת ערים תאומות",
-                  "number": 2
-                },
-                {
-                  "title": "פרק 3 - אוטומציה, קריפטו וזתים ברוטב אדום",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077539/",
-                  "image": "https://www.kan.org.il/media/kb4dnwj1/פרק-3-לאתר.jpg?width=490&height=272&v=1dd24d7a5369810",
-                  "description": "צח חבר המועצה חונך פרוייקט חדש בסימי סנטר ושירן מחפשת אהבה",
-                  "number": 3
-                },
-                {
-                  "title": "פרק 4 - חלום שמתקייש רבותיי",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077540/",
-                  "image": "https://www.kan.org.il/media/a5gpgy3r/פרק-4-לאתר.jpg?width=490&height=272&v=1dd24d2c1fc9170",
-                  "description": "פצ'צ'י במפגש מביך עם אקסית מהיסודי, חזי לה לה מנסה לכפר על חטאי העבר",
-                  "number": 4
-                },
-                {
-                  "title": "פרק 5 - אנחנו גולני, הכל בראש!",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077541/",
-                  "image": "https://www.kan.org.il/media/4nchenur/פרק-5-לאתר.jpg?width=490&height=272&v=1dd24d2d75f6bf0",
-                  "description": "פופאי משתלט על הטוסט נקניק של גולן, שירן ממשיכה לחפש זיווג הגון",
-                  "number": 5
-                },
-                {
-                  "title": "פרק 6 - מי גונב גרונות?",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077542/",
-                  "image": "https://www.kan.org.il/media/5uvdyjom/artboard-1-1x_1.jpg?rxy=0.32896456570248656,0.1827988918540171&width=490&height=272&v=1dd64a8036b4d30",
-                  "description": "נאדל נלחם ברשויות וגולן פוגש את גאוות הנגב - רינה מצליח",
-                  "number": 6
-                },
-                {
-                  "title": "פרק 7 - עושים אהבה מתחת למאוורר תקרה",
-                  "url": "https://www.kan.org.il/content/kan/kan-11/p-1077526/s1/1077543/",
-                  "image": "https://www.kan.org.il/media/53tl4jxg/לאתר.jpg?rxy=0.5085647104710881,0.3230981647167512&width=490&height=272&v=1dd3898803ed9d0",
-                  "description": "לינוי ואביחי מתמודדים עם הפחד הגדול ביותר של בעלי עסקים בבאר שבע",
-                  "number": 7
-                }
-              ]
             }
           ]
         },
@@ -35115,7 +35065,7 @@
         {
           "title": "שבע",
           "url": "https://www.kan.org.il/content/kan/kan-actual/p-11039/",
-          "image": "https://www.kan.org.il/media/q0dm0um2/שבע-עם-איילה-חסון_poster-image-big_1200x1800.jpg?width=300&height=450&v=1dd1cf629b95fd0",
+          "image": "https://www.kan.org.il/media/mavmwirb/שבע_poster-image-big_1200x1800.jpg?width=300&height=450&v=1dd6d7061c9e910",
           "description": "כל ענייני היום הבוערים",
           "seasons": [
             {
@@ -35227,7 +35177,7 @@
         {
           "title": "חדשות השבת עם איילה חסון",
           "url": "https://www.kan.org.il/content/kan/kan-actual/p-11736/",
-          "image": "https://www.kan.org.il/media/mn0g05d0/חדשות-השבת_poster-image-big_1200x1800.jpg?width=300&height=450&v=1dc465ddf357e40",
+          "image": "https://www.kan.org.il/media/c3sjinkf/חדשות-השבת_poster-image-big_1200x1800.jpg?width=300&height=450&v=1dd6d593243bd40",
           "description": "סיכום חדשות השבוע עם איילה חסון",
           "seasons": [
             {
