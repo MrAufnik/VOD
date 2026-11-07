@@ -5,7 +5,7 @@
     "name": "כאן 11",
     "provider": "kan"
   },
-  "generated_at": "2026-11-06T09:49:23Z",
+  "generated_at": "2026-11-07T09:12:11Z",
   "statistics": {
     "categories": 5,
     "series": 305,
@@ -42,6 +42,20 @@
       "title": "BOX",
       "url": "https://www.kan.org.il/lobby/kan-box/",
       "series": [
+        {
+          "title": "שום פלפל ושמן זית | קרן ואיציק קדוש",
+          "url": "https://www.kan.org.il/content/kan/kan-11/p-682519/s3/1114059/",
+          "image": "https://www.kan.org.il/media/cfgkb3qk/לאתר.jpg?rxy=0.38562968115721064,0.23377675537527712&width=490&height=272&v=1dd679d0dedd640",
+          "description": "",
+          "seasons": [
+            {
+              "number": 1,
+              "title": "פרקים",
+              "url": "https://www.kan.org.il/content/kan/kan-11/p-682519/s3/1114059/",
+              "episodes": []
+            }
+          ]
+        },
         {
           "title": "מה שתגידו | 05.11.26",
           "url": "https://www.kan.org.il/content/kan/kan-11/p-11510/עונה-6/1107312/",
@@ -749,20 +763,6 @@
                   "number": 8
                 }
               ]
-            }
-          ]
-        },
-        {
-          "title": "תגידו קצר בחירות 2026 | פרק 2",
-          "url": "https://www.kan.org.il/content/kan/kan-11/p-962897/s2/1112504/",
-          "image": "https://www.kan.org.il/media/ha2nvnrb/לאתר-מה-שתגידו.jpg?width=490&height=272&v=1dd657f532e2d10",
-          "description": "",
-          "seasons": [
-            {
-              "number": 1,
-              "title": "פרקים",
-              "url": "https://www.kan.org.il/content/kan/kan-11/p-962897/s2/1112504/",
-              "episodes": []
             }
           ]
         },
